@@ -52,23 +52,30 @@ export default function Results() {
       if (r.ok) {
         setStatus("Wysłano.");
       } else if (r.data?.error === "EMAIL_NOT_CONFIGURED") {
-        const subject = encodeURIComponent("Test Schematów — wyniki (z aplikacji)");
-        const body = encodeURIComponent([
-          "Test Schematów — wyniki (autorski test; nie jest diagnozą).",
-          "",
-          `Grupa wiekowa: ${ageGroup}`,
-          "",
-          "Top wyniki:",
-          ...top.map(t => `- ${t.name}: ${t.level} (score: ${t.score})`),
-          "",
-          "Notatka:",
-          note.trim()
-        ].join("\n"));
-        window.location.href = `mailto:${encodeURIComponent("jacekjankowski.drogarozwiazan@gmail.com")}?subject=${subject}&body=${body}`;
-        setStatus("Otwieram klienta poczty (brak SMTP na serwerze).");
-      } else {
-        setStatus("Nie udało się wysłać. Spróbuj ponownie.");
-      }
+  const subject = encodeURIComponent("Test Schematów — wyniki (z aplikacji)");
+
+  const lines = [
+    "Test Schematów — wyniki (autorski test; nie jest diagnozą).",
+    "",
+    "Grupa wiekowa: " + String(ageGroup),
+    "",
+    "Top wyniki:",
+    ...top.map(t => "- " + t.name + ": " + t.level + " (score: " + t.score + ")"),
+    "",
+    "Notatka:",
+    String(note || "").trim()
+  ];
+
+  const body = encodeURIComponent(lines.join("\n"));
+  const email = "jacekjankowski.drogarozwiazan@gmail.com";
+
+  window.location.href =
+    "mailto:" + encodeURIComponent(email) + "?subject=" + subject + "&body=" + body;
+
+  setStatus("Otwieram klienta poczty (brak SMTP na serwerze).");
+}
+
+
     } finally {
       setSending(false);
     }
