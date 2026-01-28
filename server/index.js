@@ -215,7 +215,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(__dirname, "public");
 
 app.use(express.static(publicDir, { etag: true, maxAge: "1h" }));
-app.get("*", (req, res) => res.sendFile(path.join(publicDir, "index.html")));
+app.get("*", (req, res) => res.sendFile(path.join(publicDir, "index.html")));app.get("/api/health", (req, res) => {
+  res.json({
+    ok: true,
+    service: "test-schematow",
+    time: new Date().toISOString(),
+    hasOpenAIKey: Boolean(process.env.OPENAI_API_KEY),
+    model: process.env.OPENAI_MODEL || "gpt-4.1-mini"
+  });
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
